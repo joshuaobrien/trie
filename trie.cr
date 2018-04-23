@@ -1,78 +1,83 @@
 class Node(T)
-
     property char : Char?
     property children : Array(Node(T))?
     property is_word : Bool
     property data : T?
-
-    def initialize()
-        @is_word = false
-    end
-
-    def initialize(@char : Char)
-        initialize()
-    end
-end
-
-class Trie(T)
-
-    property root : Node(T)
-
+  
     def initialize
-        @root = Node(T).new
+      @is_word = false
     end
-
+  
+    def initialize(@char : Char)
+      initialize()
+    end
+  end
+  
+  class Trie(T)
+    property root : Node(T)
+  
+    def initialize
+      @root = Node(T).new
+    end
+  
     def checkChildren(children : Array(Node), char : Char)
-        children.each do |child|
-            if child.char == char
-                return child
-            end
+      children.each do |child|
+        if child.char == char
+          return child
         end
-
-        return nil
+      end
+  
+      return nil
     end
-
+  
     def add(word : String, data : T)
-        current = @root
-
-        word.squeeze do |char|
-            if (children = current.children)
-                current = checkChildren(children, char)
-
-                if current
-                    next
-                end
-
-                children << Node(T).new(char)
-                current = children.last
-            else
-                current.children = Array(Node(T)).new
-
-                newNode = Node(T).new(char)
-                current.children.try(&.push(newNode))
-                current = newNode
-            end
+      current = @root
+  
+      word.squeeze do |char|
+        if (children = current.children)
+          current = checkChildren(children, char)
+  
+          if current
+            next
+          end
+  
+          children << Node(T).new(char)
+          current = children.last
+        else
+          current.children = Array(Node(T)).new
+  
+          newNode = Node(T).new(char)
+          current.children.try(&.push(newNode))
+          current = newNode
         end
-
-        current.is_word = true
-        current.data = data
+      end
+  
+      current.is_word = true
+      current.data = data
     end
-
+  
     def search(word : String)
-        current = @root
-
-        word.squeeze do |char|
-            if (children = current.children)
-                current = checkChildren(children, char)
-
-                if current
-                    next
-                else
-                    return nil
-                end
-            end
+      current = @root
+  
+      word.squeeze do |char|
+        if (children = current.children)
+          current = checkChildren(children, char)
+  
+          if current
+            next
+          else
+            return nil
+          end
+        else
+          return nil
         end
-
-        return current
+      end
+  
+      return current
     end
-end
+  
+    def exists?(word : String)
+      return search(word) != nil
+    end
+  end
+  
